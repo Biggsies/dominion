@@ -20,12 +20,28 @@ class DominionGUI:
         
         self.create_horizontal_scrollable_hand_frame()
         
-        self.start_button = tk.Button(self.root, text="Start game", command=self.draw_cards(5))
+        self.start_button = tk.Button(self.root, text="Start game", command=lambda: self.draw_cards(5))
         self.start_button.pack()
 
     def draw_cards(self, n):
-        draw(n)
-        self.update_hand_display()
+    	draw(n)
+    	self.update_hand_display()
+    	self.actionPhase()
+
+    def actionPhase(self):
+        while player.actions > 0:
+            if any(x.type == "Action" for x in hand):
+                choice = input("Choose an action. ")
+                player.actions -= 1
+                for index, card in enumerate(hand):
+    				if str.lower(card.name) == choice:
+    					inPlay.append(hand.pop(index))
+    					func = globals()['card_' + choice]
+    					func()
+    			print(hand)
+    		else:
+    			print("No actions to play.")
+    			break
 
     def update_hand_display(self):
         # Clear the previous hand display
@@ -35,9 +51,7 @@ class DominionGUI:
         # Create a button for each card in hand
         for card in hand:
             card_button = tk.Button(self.scrollable_frame, text=card.name, command=lambda c=card: self.use_card(c))
-            card_button.pack(side=tk.LEFT, padx=5, pady=5)
-            
-            
+            card_button.pack(side=tk.LEFT, padx=5, pady=5)           
             
 
     def create_horizontal_scrollable_hand_frame(self):
@@ -75,7 +89,7 @@ class Card:
 		self.type = type #may fall apart with multi type cards
 		self.cost = cost
 		self.value = value
-		self.vp = vp
+        self.vp = vp
 		
 	def __repr__(self):
 		return f"{self.name}"

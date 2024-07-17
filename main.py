@@ -114,7 +114,7 @@ def actionPhase():
 					
 def buyPhase():
 	choice = ""
-	while choice != "stop" and any(x.type == "Treasure" for x in hand):
+	while choice != "s" and any(x.type == "Treasure" for x in hand):
 		choice = input("Choose treasure to play. ")
 		for index, card in enumerate(hand):
 			if str.lower(card.name) == choice:
@@ -125,13 +125,17 @@ def buyPhase():
 		print(hand)
 		print(player.money)
 	choice = ""
-	while (choice != "stop") and (player.buys > 0):
+	while (choice != "s") and (player.buys > 0):
 			choice = input("Choose card to buy. ")
-			choicePile = globals()[choice + "Pile"]
-			if player.money >= choicePile[0].cost:
-				discard.append(choicePile.pop())
-				player.money -= choicePile[0].cost
-				player.buys -= 1
+			try:
+				choicePile = globals()[choice + "Pile"]
+			except KeyError:
+				print("Maybe try that again.")
+			else:	
+				if player.money >= choicePile[0].cost:
+					discard.append(choicePile.pop())
+					player.money -= choicePile[0].cost
+					player.buys -= 1
 
 def cleanupPhase():
 	discard.extend(inPlay)
@@ -150,3 +154,7 @@ while provincePile != []:
 	actionPhase()
 	buyPhase()
 	cleanupPhase()
+
+#TO DO
+#create Pile class to initialise all arrays
+#move card_ functions to their own file3
